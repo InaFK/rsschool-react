@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface FormData {
+export interface FormData {
   name: string;
   age: number;
   email: string;
@@ -11,7 +11,7 @@ interface FormData {
   country: string;
 }
 
-interface FormState {
+export interface FormState {
   uncontrolledFormData: FormData | null;
   hookFormData: FormData | null;
 }
