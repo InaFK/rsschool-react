@@ -33,26 +33,38 @@ html {
 }
 
 body {
-  background-color: #211f20;
+  background: url(src/assets/img/body-bg@2x.png), radial-gradient(100% 215.42% at 0% 0%, #5b483a 0%, #262425 100%), #211f20;
   color: #fafafa;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
   padding: 0;
+}
+
+body > div {
+  margin: 0 auto;
+  width: 768px;
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #fafafa;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #f1cdb3;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
-
+ul {
+  list-style: none;
+  list-style-image: none;
+  padding: 0;
+}
 button {
   border-radius: 8px;
   border: 1px solid #f1cdb3;
@@ -74,6 +86,19 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+nav {
+  margin: 30px 0;
+}
+
+nav ul {
+  display: flex;
+  justify-content: flex-start;
+}
+
+nav ul li {
+  margin-right: 30px;
+}
+
 main {
   min-height: 100vh;
   padding: 20px 0;
@@ -86,13 +111,6 @@ section {
   padding: 20px 0;
 }
 
-.error-boundary-fallback {
-  color: red;
-  font-size: 1.5rem;
-  text-align: center;
-  margin-top: 20px;
-}
-
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -100,10 +118,10 @@ section {
   }
 
   a:hover {
-    color: #747bff;
+    color: #f1cdb3;
   }
 
   button {
-    background-color: #f9f9f9;
+    background-color: #f1cdb3;
   }
 }
