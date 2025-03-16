@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUncontrolledFormData } from '../store/formSlice';
 import * as yup from 'yup';
@@ -88,8 +88,13 @@ const UncontrolledFormPage: React.FC = () => {
       return true;
     } catch (error) {
       if (error instanceof yup.ValidationError) {
-        const errorMessages = error.inner.reduce(
-          (acc, err) => ({ ...acc, [err.path]: err.message }),
+        const errorMessages = error.inner.reduce<Record<string, string>>(
+          (acc, err) => {
+            if (err.path) {
+              acc[err.path] = err.message;
+            }
+            return acc;
+          },
           {}
         );
         setErrors(errorMessages);
@@ -99,6 +104,42 @@ const UncontrolledFormPage: React.FC = () => {
       return false;
     }
   };
+
+  useEffect(() => {
+    const handleInputChange = () => {
+      validateForm();
+    };
+
+    const inputs = [
+      nameRef.current,
+      ageRef.current,
+      emailRef.current,
+      passwordRef.current,
+      confirmPasswordRef.current,
+      genderRef.current,
+      termsRef.current,
+      pictureRef.current,
+      countryRef.current,
+    ];
+
+    inputs.forEach((input) => {
+      if (input) {
+        input.addEventListener('input', handleInputChange);
+        input.addEventListener('change', handleInputChange);
+      }
+    });
+
+    validateForm();
+
+    return () => {
+      inputs.forEach((input) => {
+        if (input) {
+          input.removeEventListener('input', handleInputChange);
+          input.removeEventListener('change', handleInputChange);
+        }
+      });
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
