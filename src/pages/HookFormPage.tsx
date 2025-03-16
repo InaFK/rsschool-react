@@ -37,7 +37,10 @@ const schema = yup.object().shape({
     .matches(/[0-9]/, 'Password must contain at least one number')
     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[^A-Za-z0-9]/, 'Password must contain at least one special character')
+    .matches(
+      /[^A-Za-z0-9]/,
+      'Password must contain at least one special character'
+    )
     .required('Password is required'),
   confirmPassword: yup
     .string()
@@ -57,7 +60,11 @@ const schema = yup.object().shape({
       return !value || (value && (value as FileList)[0]?.size <= 1024 * 1024);
     })
     .test('fileType', 'Unsupported file format (PNG, JPEG only)', (value) => {
-      return !value || (value && ['image/png', 'image/jpeg'].includes((value as FileList)[0]?.type));
+      return (
+        !value ||
+        (value &&
+          ['image/png', 'image/jpeg'].includes((value as FileList)[0]?.type))
+      );
     }),
   country: yup.string().required('Country is required'),
 });
