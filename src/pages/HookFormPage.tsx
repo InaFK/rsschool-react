@@ -4,20 +4,9 @@ import { useDispatch } from 'react-redux';
 import { setHookFormData } from '../store/formSlice';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { InferType } from 'yup';
 import { useNavigate } from 'react-router-dom';
 import './HookFormPage.css';
-
-interface FormData {
-  name: string;
-  age: number;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  gender: string;
-  termsAccepted: boolean;
-  picture: FileList;
-  country: string;
-}
 
 const schema = yup.object().shape({
   name: yup
@@ -55,19 +44,23 @@ const schema = yup.object().shape({
     .oneOf([true], 'You must accept the terms and conditions')
     .required(),
   picture: yup
-    .mixed()
+    .mixed<FileList>()
+    .optional()
     .test('fileSize', 'File size is too large (max 1MB)', (value) => {
-      return !value || (value && (value as FileList)[0]?.size <= 1024 * 1024);
+      if (!value) return true;
+      return value instanceof FileList && value[0]?.size <= 1024 * 1024;
     })
     .test('fileType', 'Unsupported file format (PNG, JPEG only)', (value) => {
+      if (!value) return true;
       return (
-        !value ||
-        (value &&
-          ['image/png', 'image/jpeg'].includes((value as FileList)[0]?.type))
+        value instanceof FileList &&
+        (!value[0] || ['image/png', 'image/jpeg'].includes(value[0]?.type))
       );
     }),
   country: yup.string().required('Country is required'),
 });
+
+type FormData = InferType<typeof schema>;
 
 const HookFormPage: React.FC = () => {
   const {
@@ -82,7 +75,7 @@ const HookFormPage: React.FC = () => {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    const pictureFile = data.picture[0];
+    const pictureFile = data.picture?.[0];
     let pictureBase64 = '';
 
     if (pictureFile) {
