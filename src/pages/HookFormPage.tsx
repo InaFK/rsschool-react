@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { InferType } from 'yup';
 import { useNavigate } from 'react-router-dom';
+import CountryAutocomplete from '../components/CountryAutocomplete';
 import './HookFormPage.css';
 
 const schema = yup.object().shape({
@@ -204,12 +205,7 @@ const HookFormPage: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="country">Country</label>
-          <input
-            id="country"
-            {...register('country')}
-            type="text"
-            className={`form-control ${errors.country ? 'input-error' : ''}`}
-          />
+          <CountryAutocomplete id="country" name="country" register={register('country')} />
           {errors.country && (
             <p className="error-message">{errors.country.message}</p>
           )}

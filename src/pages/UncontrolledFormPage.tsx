@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUncontrolledFormData } from '../store/formSlice';
 import * as yup from 'yup';
+import CountryAutocomplete from '../components/CountryAutocomplete';
 import './UncontrolledFormPage.css';
 
 const schema = yup.object().shape({
@@ -269,12 +270,7 @@ const UncontrolledFormPage: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="country">Country</label>
-          <input
-            id="country"
-            ref={countryRef}
-            type="text"
-            className="form-control"
-          />
+          <CountryAutocomplete id="country" name="country" ref={countryRef} />
           {errors.country && <p className="error-message">{errors.country}</p>}
         </div>
 
