@@ -15,17 +15,17 @@ const schema = yup.object().shape({
     .positive('Age must be positive')
     .integer('Age must be an integer')
     .required('Age is required'),
-  email: yup
-    .string()
-    .email('Invalid email')
-    .required('Email is required'),
+  email: yup.string().email('Invalid email').required('Email is required'),
   password: yup
     .string()
     .min(8, 'Password must be at least 8 characters')
     .matches(/[0-9]/, 'Password must contain at least one number')
     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[^A-Za-z0-9]/, 'Password must contain at least one special character')
+    .matches(
+      /[^A-Za-z0-9]/,
+      'Password must contain at least one special character'
+    )
     .required('Password is required'),
   confirmPassword: yup
     .string()
@@ -45,11 +45,12 @@ const schema = yup.object().shape({
       return !value || (value && (value as File).size <= 1024 * 1024);
     })
     .test('fileType', 'Unsupported file format (PNG, JPEG only)', (value) => {
-      return !value || (value && ['image/png', 'image/jpeg'].includes((value as File).type));
+      return (
+        !value ||
+        (value && ['image/png', 'image/jpeg'].includes((value as File).type))
+      );
     }),
-  country: yup
-    .string()
-    .required('Country is required'),
+  country: yup.string().required('Country is required'),
 });
 
 const UncontrolledFormPage: React.FC = () => {
@@ -87,10 +88,10 @@ const UncontrolledFormPage: React.FC = () => {
       return true;
     } catch (error) {
       if (error instanceof yup.ValidationError) {
-        const errorMessages = error.inner.reduce((acc, err) => ({
-          ...acc,
-          [err.path]: err.message,
-        }), {});
+        const errorMessages = error.inner.reduce(
+          (acc, err) => ({ ...acc, [err.path]: err.message }),
+          {}
+        );
         setErrors(errorMessages);
         setIsFormValid(false);
         return false;
@@ -175,7 +176,9 @@ const UncontrolledFormPage: React.FC = () => {
             type="password"
             className="form-control"
           />
-          {errors.password && <p className="error-message">{errors.password}</p>}
+          {errors.password && (
+            <p className="error-message">{errors.password}</p>
+          )}
         </div>
 
         <div className="form-group">
@@ -186,7 +189,9 @@ const UncontrolledFormPage: React.FC = () => {
             type="password"
             className="form-control"
           />
-          {errors.confirmPassword && <p className="error-message">{errors.confirmPassword}</p>}
+          {errors.confirmPassword && (
+            <p className="error-message">{errors.confirmPassword}</p>
+          )}
         </div>
 
         <div className="form-group">
@@ -204,7 +209,9 @@ const UncontrolledFormPage: React.FC = () => {
             <input id="termsAccepted" ref={termsRef} type="checkbox" />
             Accept Terms and Conditions
           </label>
-          {errors.termsAccepted && <p className="error-message">{errors.termsAccepted}</p>}
+          {errors.termsAccepted && (
+            <p className="error-message">{errors.termsAccepted}</p>
+          )}
         </div>
 
         <div className="form-group">

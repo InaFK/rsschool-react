@@ -22,35 +22,54 @@ interface FormData {
 const schema = yup.object().shape({
   name: yup
     .string()
-    .matches(/^[A-Z]/, 'Must start with an uppercase letter')
-    .required(),
-  age: yup.number().min(0, 'No negative values').required(),
-  email: yup.string().email('Invalid email').required(),
+    .matches(/^[A-Z]/, 'Name must start with an uppercase letter')
+    .required('Name is required'),
+  age: yup
+    .number()
+    .typeError('Age must be a number')
+    .positive('Age must be positive')
+    .integer('Age must be an integer')
+    .required('Age is required'),
+  email: yup.string().email('Invalid email').required('Email is required'),
   password: yup
     .string()
     .min(8, 'Password must be at least 8 characters')
-    .required(),
+    .matches(/[0-9]/, 'Password must contain at least one number')
+    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .matches(/[^A-Za-z0-9]/, 'Password must contain at least one special character')
+    .required('Password is required'),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref('password'), ''], 'Passwords must match')
-    .required(),
-  gender: yup.string().required(),
+    .required('Confirm password is required'),
+  gender: yup
+    .string()
+    .notOneOf([''], 'Gender is required')
+    .required('Gender is required'),
   termsAccepted: yup
     .bool()
-    .oneOf([true], 'You must accept the terms and conditions'),
-  picture: yup.mixed().test('fileSize', 'File Size is too large', (value) => {
-    return value && (value as FileList)[0]?.size <= 1024 * 1024;
-  }),
-  country: yup.string().required(),
+    .oneOf([true], 'You must accept the terms and conditions')
+    .required(),
+  picture: yup
+    .mixed()
+    .test('fileSize', 'File size is too large (max 1MB)', (value) => {
+      return !value || (value && (value as FileList)[0]?.size <= 1024 * 1024);
+    })
+    .test('fileType', 'Unsupported file format (PNG, JPEG only)', (value) => {
+      return !value || (value && ['image/png', 'image/jpeg'].includes((value as FileList)[0]?.type));
+    }),
+  country: yup.string().required('Country is required'),
 });
 
 const HookFormPage: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
     resolver: yupResolver(schema),
+    mode: 'onChange',
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -196,7 +215,7 @@ const HookFormPage: React.FC = () => {
           )}
         </div>
 
-        <button type="submit" className="submit-button">
+        <button type="submit" className="submit-button" disabled={!isValid}>
           Submit
         </button>
       </form>
